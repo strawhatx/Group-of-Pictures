@@ -1,21 +1,14 @@
 'use strict';
-import ffmpeg from "ffmpeg";
+import { exec } from "child_process";
 
 export interface IVideoService {
-  getVideoInfo: (videoName: string,) => void;
+  getVideoInfo: (videoPath: string,) => void;
 }
 
 export class VideoService implements IVideoService {
-  getVideoInfo = (inputPath: string) => {
+  getVideoInfo = (videoPath: string) => {
     try {
-      const videoInfo = ffmpeg.ffprobe(inputPath)
-
-      const { duration, size } = videoInfo.format;
-
-      return {
-        size,
-        durationInSeconds: Math.floor(duration),
-      };
+      return {};
     } catch (error) {
       throw error;
     }

@@ -46,7 +46,7 @@ export class VideoController {
         data: []
       }
     }
-    catch (error) {
+    catch (error: any) {
       throw new BadRequestError(error);
     }
   }
