@@ -1,5 +1,5 @@
 import {
-  JsonController, Get, Post, Put, Delete, BadRequestError, Param
+  JsonController, Get, Render, BadRequestError, Param
 } from 'routing-controllers';
 import { VideoService } from '../services/video-service';
 
@@ -9,21 +9,37 @@ import { VideoService } from '../services/video-service';
 */
 @JsonController('/videos')
 export class VideoController {
-  constructor(private readonly service: VideoService = new VideoService()) { }
+  constructor() { }
 
   /**
- * Gets specified video and splits into sections
- * in a json format
+ * This endpoint should respond with JSON encoded data 
+ * showing details of all the I frames in a video.
+ * 
+ * @url /videos/videoName/group-of-pictures'
+ * @param videoName name of the video file
+ * @returns  json document of group of pictures data
+ */
+  @Get('/')
+  async getVideoBase() {
+    return { test: "data" }
+  }
+
+  /**
+ * This endpoint should respond with JSON encoded data 
+ * showing details of all the I frames in a video.
  * 
  * @url /videos/videoName/group-of-pictures'
  * @param videoName name of the video file
  * @returns  json document of group of pictures data
  */
   @Get('/:videoName/group-of-pictures.json')
-  async getVideoJson(@Param('videoName') videoName: string) {
+  async getVideoJsonData(@Param('videoName') videoName: string) {
     try {
+      // call the cmd service to pull oout the frame data as json
+      var json = await new VideoService(videoName).GetIFrameInJson();
+
       return {
-        data: []
+        json
       }
     }
     catch (error: any) {
@@ -33,17 +49,20 @@ export class VideoController {
 
   /**
    * Gets specified video and splits into sections
-   * rederd as grid of videos
+   * renderd as grid of videos
    * 
-   * @url /videos/videoName/group-of-pictures'
+   * @url /videos/:videoName.mp4/group-of-pictures
    * @param videoName name of the video file
    * @returns  an array of countries
    */
-  @Get('/:videoName.mp4/group-of-pictures')
+  @Get('/:videoName/group-of-pictures')
+  @Render("videos.jade")
   async getVideos(@Param('videoName') videoName: string) {
     try {
+      const gridData = await new VideoService(videoName).GetGridData()
+
       return {
-        data: []
+        gridData
       }
     }
     catch (error: any) {

@@ -2,7 +2,8 @@
     "compilerOptions": {
       "target": "es6", 
       "module": "CommonJS", 
-      "sourceMap": true, 
+      "sourceMap": true,
+      "rootDir": "./", 
       "outDir": "./dist", 
       "strict": true, 
       "moduleResolution": "node", 
@@ -10,6 +11,8 @@
       "forceConsistentCasingInFileNames": true,
       "experimentalDecorators": true, 
     "emitDecoratorMetadata": true, 
-    }
+    },
+    "include": ["server/**/*.ts"],
+   "exclude": ["node_modules", "**/*.spec.ts"]
 }
   
