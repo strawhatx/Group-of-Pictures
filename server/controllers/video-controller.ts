@@ -1,5 +1,6 @@
+import { Response } from 'express';
 import {
-  JsonController, Get, Render, BadRequestError, Param
+  JsonController, Get, Render, BadRequestError, Param, Res
 } from 'routing-controllers';
 import { VideoService } from '../services/video-service';
 
@@ -53,16 +54,16 @@ export class VideoController {
    * 
    * @url /videos/:videoName.mp4/group-of-pictures
    * @param videoName name of the video file
-   * @returns  an array of countries
+   * @returns  view data
    */
   @Get('/:videoName/group-of-pictures')
   @Render("videos.jade")
   async getVideos(@Param('videoName') videoName: string) {
     try {
-      const gridData = await new VideoService(videoName).GetGridData()
+      const viewData = await new VideoService(videoName).GetGridViewData();
 
       return {
-        gridData
+        viewData
       }
     }
     catch (error: any) {
@@ -76,9 +77,11 @@ export class VideoController {
    * @param id 
    * @returns  country object
    */
-  @Get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4')
-  async getVideo(@Param('videoName') videoName: string, @Param('groupIndex') groupIndex: string) {
+  @Get('/:videoName/group-of-pictures/:groupIndex')
+  async getVideo(@Res() response: Response, @Param('videoName') videoName: string, @Param('groupIndex') groupIndex: number) {
     try {
+      const stream = await new VideoService(videoName).GetFrameViewDataByIndex(groupIndex, response);
+
       return {
         data: {}
       }
