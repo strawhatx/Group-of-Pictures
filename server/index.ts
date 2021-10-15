@@ -6,7 +6,6 @@ import express, { Request, Response, NextFunction } from "express";
 import { useExpressServer } from 'routing-controllers';
 import path from 'path';
 import morgan from "morgan";
-import cors from "cors";
 
 /**
  * Server
@@ -28,7 +27,6 @@ export class Server {
             routePrefix: '/api',
             // register created express server in routing-controllers
             controllers: [path.join(__dirname + '/controllers/*.ts')], // and configure it the way you need (controllers, validation, etc.)
-            //cors:true
         });
     }
 
@@ -46,27 +44,7 @@ export class Server {
         this.app.set('view engine', 'jade');
         this.app.set("json spaces", 2);
 
-        // cors
-        const corsOptions = {
-            origin: "http://localhost:8081",
-            credentials: true,
-        }
 
-        this.app.use(cors(corsOptions));
-
-        /** RULES OF OUR API */
-        this.app.use((req: Request, res: Response, next: NextFunction) => {
-            // set the CORS policy
-            res.header('Access-Control-Allow-Origin', '*');
-            // set the CORS headers
-            res.header('Access-Control-Allow-Headers', 'origin, X-Requested-With,Content-Type,Accept, Authorization');
-            // set the CORS method headers
-            if (req.method === 'OPTIONS') {
-                res.header('Access-Control-Allow-Methods', 'GET PATCH DELETE POST');
-                return res.status(200).json({});
-            }
-            next();
-        });
     }
 
     /**

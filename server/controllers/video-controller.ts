@@ -80,11 +80,11 @@ export class VideoController {
   @Get('/:videoName/group-of-pictures/:groupIndex')
   async getVideo(@Res() response: Response, @Param('videoName') videoName: string, @Param('groupIndex') groupIndex: number) {
     try {
+
       const stream = await new VideoService(videoName).GetFrameViewDataByIndex(groupIndex, response);
 
-      return {
-        data: {}
-      }
+      return response.send(stream);
+
     }
     catch (error: any) {
       throw new BadRequestError(error);

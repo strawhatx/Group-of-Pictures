@@ -1,6 +1,7 @@
 import { exec } from "child_process";
 import path from 'path';
 import { Response } from 'express';
+import { createReadStream, ReadStream } from 'fs';
 
 export class VideoService {
     private videoName: string;
@@ -85,8 +86,19 @@ export class VideoService {
 
         const { start, end } = range;
 
+        // create a readable stream of the video file to pass to the command
+        const readStream = await createReadStream(this.pathName);
+
+        // keep the connection alive to account for longer response times
+        writeStream.setHeader("Connection", "Keep-Alive");
+
+        // set the correct mime type so the client knows what to do with the response object
+        writeStream.contentType("mp4");
+
         // define the command: get segment the vido based on start and endd times
-        const command = `ffmpeg -i ${this.pathName} -ss ${start} -t ${end} -f pipe:1`;
+        const command = `ffmpeg -i ${this.pathName} -ss ${start} -t ${end} -c:v copy -c:a copy -movflags frag_keyframe+empty_moov -f mp4 pipe:1`;
+
+        const command_2 = `ffmpeg -i ${this.pathName} -ss ${start} -t ${end} -c:v copy -c:a copy ${index}.mp4 `;
 
         const process: string = await new Promise((resolve, reject) => {
             exec(command, { maxBuffer: 5 * 1024 * 1024 }, (error: any, stdout: string, stderr: any) => {
