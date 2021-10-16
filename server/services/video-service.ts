@@ -109,7 +109,7 @@ export class VideoService {
             .on("error", (e) => {
                 console.log("ERROR:", e);
             })
-            // pipe the output data directly on the write stream and send the response
+            // pipe the output and send the response
             .pipe(writeStream, { end: true });
     }
 
