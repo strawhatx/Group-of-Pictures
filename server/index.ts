@@ -1,11 +1,11 @@
 /** server/index.ts */
 import 'localenv'
-import 'reflect-metadata'
-//import * as dotenv from "dotenv"
-import express, { Request, Response, NextFunction } from "express";
+
+import express from "express";
 import { useExpressServer } from 'routing-controllers';
 import path from 'path';
 import morgan from "morgan";
+import { router } from './routes';
 
 /**
  * Server
@@ -15,7 +15,6 @@ export class Server {
     constructor() {
         this.app = express();
         this.config();
-        this.controllers();
     }
 
     /**
@@ -44,7 +43,8 @@ export class Server {
         this.app.set('view engine', 'jade');
         this.app.set("json spaces", 2);
 
-
+        // simple router
+        this.app.use('/videos', router);
     }
 
     /**
