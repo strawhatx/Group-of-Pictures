@@ -9,7 +9,7 @@ export class VideoService {
 
     private pathName: string;
 
-    private iFrameJson;
+    private iFrameJson: Promise<any>;
 
     /**
      * construcor
@@ -26,13 +26,11 @@ export class VideoService {
      * @param command command line argument: ffprobe -i [file path] -show_frames -print_format [format]
      * @returns a promise string 
      */
-    public async GetIFrameInJson() {
-        //var path = `ffprobe -i D:/development/React/sites/Group-of-Pictures/server/data/CoolVideo.mp4 -show_frames -print_format json`
-
+    public async GetIFrameInJson(): Promise<any> {
         // define the command: show the video frames and out put as a json string
-        const command = `ffprobe -i ${this.pathName} -show_frames -print_format json`;
+        const command: string = `ffprobe -i ${this.pathName} -show_frames -print_format json`;
 
-        let process = await new Promise<string>((resolve, reject) => {
+        let process: string = await new Promise<string>((resolve: any, reject: any) => {
             exec(command, { maxBuffer: 5 * 1024 * 1024 }, (error: any, stdout: string, stderr: any) => {
                 if (error) {
                     console.log(`error: ${error.message}`);
@@ -59,7 +57,7 @@ export class VideoService {
      * use the iframes  to set view data and build out urls for the grid clips
      * @returns array of randes with urls
      */
-    public async GetGridViewData() {
+    public async GetGridViewData(): Promise<any> {
         var iframes = await this.iFrameJson;
 
         let results = iframes.map(async (_: any, i: any) => {
@@ -81,7 +79,7 @@ export class VideoService {
      * @param index 
      * @param writeStream 
      */
-    public async GetFrameViewDataByIndex(index: number, writeStream: Response) {
+    public async GetFrameViewDataByIndex(index: number, writeStream: Response): Promise<void> {
         const range = await this.GetFrameRange(index);
 
         const { start, end } = range;
@@ -106,10 +104,10 @@ export class VideoService {
                 console.log("file written successfully");
             })
             .on("stderr", (e) => {
-                console.log("STDERR SINGLE CLIP", e);
+                console.log("STDERR:", e);
             })
             .on("error", (e) => {
-                console.log("ERROR GETTING SINGLE CLIP", e);
+                console.log("ERROR:", e);
             })
             // pipe the output data directly on the write stream and send the response
             .pipe(writeStream, { end: true });
@@ -120,7 +118,7 @@ export class VideoService {
     * @param frameIndex
     * @returns
     */
-    private async GetFrameRange(frameIndex: number) {
+    private async GetFrameRange(frameIndex: number): Promise<{ start: any, end: any }> {
         var isLastFrame = false;
 
         var iframes = await this.iFrameJson;
@@ -142,7 +140,6 @@ export class VideoService {
         } catch (error) {
             throw error;
         }
-
     }
 
     /**
@@ -150,7 +147,7 @@ export class VideoService {
      * so we need to go from tat to the last frame(P,B)
      * @returns 
      */
-    private async GetDurationForLastFrame() {
+    private async GetDurationForLastFrame(): Promise<any> {
         const command = `ffprobe -i ${this.pathName} -show_frames -print_format json`;
         const process: string = await new Promise((resolve, reject) => {
             exec(command, { maxBuffer: 5 * 1024 * 1024 }, (error: any, stdout: string, stderr: any) => {
